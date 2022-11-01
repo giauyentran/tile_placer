@@ -1,0 +1,17 @@
+﻿"Crossbar_Width"= 80mm
+"Vertical_Offset"= "Crossbar_Width" / 2
+"D3@Master Dimensions" = "Crossbar_Width"
+"D4@Master Dimensions" = "Vertical_Offset"
+"Lateral_Offset"= "Toolhead_Width"
+"D5@Master Dimensions"= "Lateral_Offset"
+"Toolhead_Width"= 100mm
+"D6@Master Dimensions" = "Toolhead_Width"
+"Mechanical_Buffer"= 30mm
+"D7@Master Dimensions" = "Mechanical_Buffer"
+"D8@Master Dimensions" = "Mechanical_Buffer"
+"Z_Interstitial"= 100mm
+"Z_Interstitial_Sketch"= "Z_Interstitial" + 1in
+"D2@Sketch20"="Z_Interstitial_Sketch"
+"D1@Sketch22"="Z_Interstitial_Sketch"
+"D2@Sketch22"="Z_Interstitial_Sketch"
+"D1@Sketch20"="Z_Interstitial_Sketch"
