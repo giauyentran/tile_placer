@@ -19,7 +19,10 @@
 #define DIR A1
 #define STEP A0
 #define X_ENABLE_PIN 38
-//#define SLEEP 13 // optional (just delete SLEEP from everywhere if not used)
+#define Y_ENABLE_PIN 
+#define Z_ENABLE_PIN
+
+//#define SLEEP 13 // optional (just delete SLEEP f+rom everywhere if not used)
 
 /*
 #include "A4988.h"
@@ -45,6 +48,8 @@ A4988 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, M0, M1);
 #define MS2 11
 #define MS3 12
 A4988 stepper(MOTOR_STEPS, DIR, STEP, X_ENABLE_PIN, MS1, MS2, MS3);
+A4988 stepper(MOTOR_STEPS, DIR, STEP, Y_ENABLE_PIN, MS1, MS2, MS3);
+A4988 stepper(MOTOR_STEPS, DIR, STEP, Z_ENABLE_PIN, MS1, MS2, MS3);
 
 // #include "DRV8825.h"
 // #define MODE0 10
@@ -78,7 +83,7 @@ void loop() {
      * The easy way is just tell the motor to rotate 360 degrees at 1rpm
      */
 
-    go_distance_mm(-40);
+    go_distance_mm(0);
     delay(500);
 }
 
