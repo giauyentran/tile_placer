@@ -90,14 +90,14 @@ void setup() {
      */
     //X.begin(120, MICROSTEPS);
     Y_1.begin(120, MICROSTEPS);
-    //Y_2.begin(120, MICROSTEPS);
+    Y_2.begin(120, MICROSTEPS);
     // if using enable/disable on ENABLE pin (active LOW) instead of SLEEP uncomment next line
     //X.setEnableActiveState(LOW);
     Y_1.setEnableActiveState(LOW);
-    //Y_2.setEnableActiveState(LOW);
+    Y_2.setEnableActiveState(LOW);
     //X.enable();
     Y_1.enable();
-    //Y_2.enable();
+    Y_2.enable();
 }
 
 void loop() {
@@ -121,6 +121,6 @@ void go_distance_mm(int dist) {
   int degree = dist * 9;
   //X.rotate(degree);
   Y_1.rotate(degree);
-  //Y_2.rotate(degree);
+  Y_2.rotate(degree);
   //Y_2.rotate(degree);
 }
