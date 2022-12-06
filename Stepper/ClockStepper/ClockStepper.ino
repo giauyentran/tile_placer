@@ -89,14 +89,14 @@ void setup() {
      * Set target motor RPM=1
      */
     //X.begin(120, MICROSTEPS);
-    Y_1.begin(120, MICROSTEPS);
+    X.begin(120, MICROSTEPS);
     //Y_2.begin(120, MICROSTEPS);
     // if using enable/disable on ENABLE pin (active LOW) instead of SLEEP uncomment next line
     //X.setEnableActiveState(LOW);
-    Y_1.setEnableActiveState(LOW);
+    X.setEnableActiveState(LOW);
     //Y_2.setEnableActiveState(LOW);
     //X.enable();
-    Y_1.enable();
+    X.enable();
     //Y_2.enable();
 }
 
@@ -114,13 +114,24 @@ void loop() {
       go_distance_mm(0);
     }
    */
-   go_distance_mm(5);
+   go_distance_mm(50);
+   delay(500);
+   go_distance_mm(100);
+   delay(500);
+   go_distance_mm(150);
+   delay(500);
+   go_distance_mm(200);
+   delay(500);
+   go_distance_mm(250);
+   delay(500);
+   go_distance_mm(300);
+   delay(500);
 }
 
 void go_distance_mm(int dist) {
   int degree = dist * 9;
   //X.rotate(degree);
-  Y_1.rotate(degree);
+  X.rotate(degree);
   //Y_2.rotate(degree);
   //Y_2.rotate(degree);
 }

@@ -1,5 +1,13 @@
+from image_processing import convert_image
 from gcode_convert import *
-# from convert_image import * #TODO: import
+import sys
+bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\image_processing"
+# Insert the path of modules folder
+sys.path.append(bulk_of_path)
+import convert_image
+# Import the module0 directly since
+# the current path is of modules.
+import module0
 
 storage_width = 100          # mm
 dist_between_tiles = 5      # mm
@@ -12,8 +20,7 @@ flipper_drop_pos = (flipper_pickup_pos[0] - 40, flipper_pickup_pos[1])       # m
 travel_height = 30         # mm
 default_speed = 200         # RPM 
 image_dimensions = [18, 24]
-
-
+image_paths = [bulk_of_path + r'\U.png']
 def get_coord(tile_index):
     '''
     Converts tile index to gantry coordinates.
@@ -45,7 +52,7 @@ def place_empty_grid(image_array, text_file):
             tile_index = (r+1,c+1)
             coords = get_coord(tile_index)
 
-            # G Code command
+            # GCode command
             text_file.write(gcode_move_z(travel_height))
             text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
     pass
@@ -63,7 +70,12 @@ def update_grid(previous_image, updated_image):
         for c in range(len(previous_image[r])):
             if previous_image[r][c] != updated_image[r][c]:
                 flip_tile((r+1,c+1), text_file)
-    pass
+
+def generate_all_images(image_paths):
+    for i in range(0, len(image_paths)):
+        img1 = convert_image(image_paths[i])
+        img2 = convert_image(image_paths[i+1])
+        update_grid(img1, img2)
 
 def flip_tile(tile_index, text_file):
     '''
@@ -109,7 +121,7 @@ test_image = [[0,1],[1,0]]
 
 
 # Generate Gcode
-text_file = open("G Code/gcode_commands.txt", "w")
+text_file = open("GCode/gcode_commands.txt", "w")
 text_file.write("G90 \n")
 text_file.write("G1 F12000 \n")
 text_file.write(gcode_pump("ON"))
