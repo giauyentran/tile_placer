@@ -5,13 +5,12 @@ storage_width = 100          # mm
 dist_between_tiles = 5      # mm
 tile_width = 75             # mm
 flipper_drop_height = 96    # mm
-tile_pickup_height = 2      # mm
+tile_pickup_height = 3.4      # mm
 flipper_pickup_height = 6  # mm
 flipper_pickup_pos = (60,150)     # mm
-flipper_drop_pos = (flipper_pickup_pos[0] - 45, flipper_pickup_pos[1])       # mm
+flipper_drop_pos = (flipper_pickup_pos[0] - 40, flipper_pickup_pos[1])       # mm
 travel_height = 30         # mm
 default_speed = 200         # RPM 
-vacuum_pin = 2
 image_dimensions = [18, 24]
 
 
@@ -79,19 +78,20 @@ def flip_tile(tile_index, text_file):
     tile_coords = get_coord(tile_index)
 
     # pick up to tile to flip
+    text_file.write(gcode_pump("ON"))
     text_file.write(gcode_move_xy(tile_coords))
     text_file.write(gcode_move_z(tile_pickup_height))
-    text_file.write(gcode_pump(vacuum_pin, "HIGH"))
 
     # drop tile into flipper
     text_file.write(gcode_move_z(flipper_drop_height))
     text_file.write(gcode_move_xy(flipper_drop_pos))
-    text_file.write(gcode_pump(vacuum_pin, "LOW"))
+    text_file.write(gcode_pump("OFF"))
+    text_file.write("G4 P8000 \n")
+    text_file.write(gcode_pump("ON"))
 
     # pick up tile
     text_file.write(gcode_move_xy(flipper_pickup_pos))
     text_file.write(gcode_move_z(flipper_pickup_height))
-    text_file.write(gcode_pump(vacuum_pin, "HIGH"))
 
     # place flipped tile
     text_file.write(gcode_move_z(travel_height))
@@ -99,7 +99,8 @@ def flip_tile(tile_index, text_file):
     text_file.write(gcode_move_z(tile_pickup_height))
 
     # turn off vacuum pump
-    text_file.write(gcode_pump(vacuum_pin, "LOW"))
+    text_file.write(gcode_pump("OFF"))
+    text_file.write("G4 P8000 \n")
 
 # initial_image = [([0]*image_dimensions[1]) for i in range(image_dimensions[0])]
 initial_image = [[0,0],[0,0]]
@@ -109,6 +110,9 @@ test_image = [[0,1],[1,0]]
 
 # Generate Gcode
 text_file = open("G Code/gcode_commands.txt", "w")
+text_file.write("G90 \n")
+text_file.write("G1 F12000 \n")
+text_file.write(gcode_pump("ON"))
 place_empty_grid(initial_image, text_file)
 update_grid(initial_image, test_image)
 text_file.close()
