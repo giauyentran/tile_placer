@@ -33,6 +33,7 @@ def gcode_move_xy(coords):
     return(f"G1 X{coords[0]} Y{coords[1]}\n")
 
 def gcode_pump(vacuum_pin, state):
+    # TODO: confirm this Gcode command
     '''
     Generated Gcode command to move toolhead to location 
 

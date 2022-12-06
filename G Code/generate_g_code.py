@@ -17,10 +17,12 @@ image_dimensions = [18, 24]
 
 def get_coord(tile_index):
     '''
-    converts tile index to gantry coordinates
+    Converts tile index to gantry coordinates.
 
     Args:
         tile_index
+
+    Returns a 2-tuple with corresponding to (x,y) in the gantry space.
     '''
     t_x = tile_index[0]
     t_y = tile_index[1]
@@ -31,7 +33,12 @@ def get_coord(tile_index):
 
 def place_empty_grid(image_array, text_file):
     '''
-    iterates through image and returns a coordinate
+    TODO: determine how to do this
+
+    Places an empty grid, the starting "image".
+
+    Args:
+        image_array: a 2D binary array with each value representing a pixel
     '''
     
     for r in range(len(image_array)):
@@ -40,15 +47,18 @@ def place_empty_grid(image_array, text_file):
             coords = get_coord(tile_index)
 
             # G Code command
-            text_file.write(f"G1 Z{travel_height}\n")
+            text_file.write(gcode_move_z(travel_height))
             text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
-
     pass
             
 
 def update_grid(previous_image, updated_image):
     '''
     Change image displayed on grid
+
+    Args:
+        previous_image: a 2D binary array representing the image to be replaced
+        updated_image: a 2D binary array representing the image to be plotted
     '''
     for r in range(len(previous_image)):
         for c in range(len(previous_image[r])):
@@ -91,10 +101,13 @@ def flip_tile(tile_index, text_file):
     # turn off vacuum pump
     text_file.write(gcode_pump(vacuum_pin, "LOW"))
 
-initial_image = [([0]*image_dimensions[1]) for i in range(image_dimensions[0])]
-print(initial_image)
-test_image = convert_image()
+# initial_image = [([0]*image_dimensions[1]) for i in range(image_dimensions[0])]
+initial_image = [[0,0],[0,0]]
+test_image = [[0,1],[1,0]]
+# test_image = convert_image()
 
+
+# Generate Gcode
 text_file = open("G Code/gcode_commands.txt", "w")
 place_empty_grid(initial_image, text_file)
 update_grid(initial_image, test_image)
