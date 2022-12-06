@@ -29,12 +29,7 @@ def image_to_array(image_path):
                 img_array[i][j] = 0
 
     # convert array into binary array
-    binary_img = Image.fromarray(img_array * 255, 'L')
-    binary_img.show()
+    #binary_img = Image.fromarray(img_array * 255, 'L')
+    #binary_img.show()
 
     return img_array
-
-bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
-str = bulk_of_path + r'\untiled_test.png'
-test_arr = image_to_array(str)
-print(test_arr)
