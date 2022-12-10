@@ -7,10 +7,12 @@ def image_to_array(image_path):
     # convert to grayscale
     img = Image.open(image_path)
     img = img.convert('L')
+    xdim = 20
+    ydim = 15
     #img.show()
 
     # reduce resolution
-    img = img.resize((24,18))
+    img = img.resize((xdim, ydim))
     #img.show()
 
     # convert to 2D array
