@@ -13,7 +13,7 @@ class PrinterPlaceProbe:
     def __init__(self, config):
         self.config = config
         self.printer = config.get_printer()
-        # self.toolhead = self.printer.lookup_object("toolhead")
+        self.position_min = config.getfloat('position_min', None)
         gcode = self.printer.lookup_object("gcode")
         self.query_endstops = self.printer.load_object(config,
             'query_endstops')
@@ -33,6 +33,7 @@ class PrinterPlaceProbe:
     def _detect_tile(self, endstop):
         toolhead = self.printer.lookup_object("toolhead")
         toolhead_position = toolhead.get_position()
+        toolhead_position[2] = 0.0 #self.position_min
         phoming = self.printer.lookup_object("homing")
         phoming.probing_move(endstop, toolhead_position, 20)
 
