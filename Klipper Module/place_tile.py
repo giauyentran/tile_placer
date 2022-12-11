@@ -10,12 +10,14 @@ class EndstopWrapper:
         self.query_endstop = self.mcu_endstop.query_endstop
 
 class PrinterPlaceProbe:
-    def __init__(self,config):
+    def __init__(self, config):
+        self.config = config
         self.printer = config.get_printer()
         # self.toolhead = self.printer.lookup_object("toolhead")
-        self.phoming = self.printer.lookup_object("homing")
         gcode = self.printer.lookup_object("gcode")
-        self.printer.register_event_handler("klipper:connect",
+        self.query_endstops = self.printer.load_object(config,
+            'query_endstops')
+        self.printer.register_event_handler("klippy:connect",
             self.handle_connect)
         gcode.register_command("AMOGUS", self.cmd_AMOGUS)
 
@@ -26,12 +28,13 @@ class PrinterPlaceProbe:
     def handle_connect(self):
         for endstop, name in self.query_endstops.endstops:
             if name == "z":
-                self.z_endstops = EndstopWrapper(self.config, endstop)
+                self.z_endstop = EndstopWrapper(self.config, endstop)
 
     def _detect_tile(self, endstop):
         toolhead = self.printer.lookup_object("toolhead")
         toolhead_position = toolhead.get_position()
-        self.phoming.probing_move(endstop, toolhead_position, 20)
+        phoming = self.printer.lookup_object("homing")
+        phoming.probing_move(endstop, toolhead_position, 20)
 
 def load_config(config):
     return PrinterPlaceProbe(config)
