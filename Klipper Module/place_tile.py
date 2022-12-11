@@ -19,10 +19,10 @@ class PrinterPlaceProbe:
             'query_endstops')
         self.printer.register_event_handler("klippy:connect",
             self.handle_connect)
-        gcode.register_command("AMOGUS", self.cmd_AMOGUS)
+        gcode.register_command("DETECT_TILE", self.cmd_DETECT_TILE)
 
-    def cmd_AMOGUS(self, gcmd):
-        gcmd.respond_info("sus")
+    def cmd_DETECT_TILE(self, gcmd):
+        # gcmd.respond_info("sus")
         self._detect_tile(self.z_endstop)
 
     def handle_connect(self):
