@@ -5,22 +5,28 @@ bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\t
 # Insert the path of modules folder
 sys.path.append(bulk_of_path)
 
-storage_width = 100          # mm
-dist_between_tiles = 5      # mm
-tile_width = 25             # mm
-flipper_drop_height = 96    # mm
-tile_pickup_height = 3.4      # mm
-flipper_pickup_height = 6  # mm
-flipper_pickup_pos = (17,408)     # mm
+# Gantry Geometry
+work_offset = 100               # mm, unworkable area of grid for flipper
+dist_between_tiles = 2          # mm
+tile_width = 23                 # mm
+flipper_drop_height = 96        # mm
+tile_pickup_height = 3.4        # mm
+flipper_pickup_height = 6       # mm
+flipper_pickup_pos = (17,408)   # mm
 flipper_drop_pos = (flipper_pickup_pos[0], flipper_pickup_pos[1]+35)       # mm
-travel_height = 30         # mm
-default_speed = 200         # RPM 
-image_dimensions = [18, 24]
+travel_height = 30              # mm
+
+# Movement Parameters
+default_speed = 200             # RPM 
+image_dimensions = (18, 24)     # pixels
+standard_delay = 100            # ms
+flipper_delay = 400             # ms
+
+# Image Naming Convention
 image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path + r'\3.png',
                bulk_of_path + r'\4.png', bulk_of_path + r'\5.png', bulk_of_path + r'\6.png',
                bulk_of_path + r'\7.png']
-delay_rate = 100
-work_offset = 100
+
 def get_coord(tile_index):
     '''
     Converts tile index to gantry coordinates.
@@ -32,8 +38,8 @@ def get_coord(tile_index):
     '''
     t_x = tile_index[0]
     t_y = tile_index[1]
-    x = 25*t_x + work_offset
-    y = 25*t_y
+    x = (tile_width + dist_between_tiles) * t_x + work_offset
+    y = (tile_width + dist_between_tiles) * t_y
 
     return (x,y)
 
@@ -51,7 +57,6 @@ def place_empty_grid(image_dimensions, text_file):
         for c in range(image_dimensions[0]):
             tile_index = (c+1, r+1)
             coords = get_coord(tile_index)
-            print(f"r: {r} c: {c} coords: {coords}")
 
             # GCode command
             text_file.write(gcode_move_z(travel_height))
