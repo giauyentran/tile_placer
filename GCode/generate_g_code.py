@@ -21,6 +21,7 @@ image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path 
                bulk_of_path + r'\7.png']
 delay_rate = 100
 work_offset = 100
+fast_speed = 12000
 def get_coord(tile_index):
     '''
     Converts tile index to gantry coordinates.
@@ -47,7 +48,7 @@ def place_empty_grid(image_dimensions, text_file):
         image_array: a 2D binary array with each value representing a pixel
     '''
     
-    for r in range(6, 10):
+    for r in range(16, image_dimensions[1]):
         for c in range(image_dimensions[0]):
             tile_index = (c+1, r+1)
             coords = get_coord(tile_index)
@@ -58,12 +59,15 @@ def place_empty_grid(image_dimensions, text_file):
             text_file.write(gcode_move_xy(flipper_pickup_pos))
             text_file.write("probe_tile\n")
             text_file.write(gcode_move_z(flipper_pickup_height))
+            text_file.write(f"G4 P{400} \n")
             text_file.write(gcode_valve("OPEN"))
             text_file.write(gcode_move_z(travel_height))
             text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
             text_file.write("probe_tile\n")
             text_file.write(gcode_move_z(tile_pickup_height))
+            text_file.write(f"G4 P{400} \n")
             text_file.write(gcode_valve("CLOSE"))
+            text_file.write(f"G4 P{400} \n")
             text_file.write(gcode_move_z(travel_height))
     pass
             
@@ -120,6 +124,7 @@ def flip_tile(tile_index, text_file):
     text_file.write(gcode_move_xy(flipper_pickup_pos))
     text_file.write("probe_tile\n")
     text_file.write(gcode_move_z(flipper_pickup_height))
+    text_file.write(f"G4 P{400} \n")
 
     # place flipped tile
     text_file.write(gcode_move_z(travel_height))
@@ -141,9 +146,9 @@ test_image = [[0,1,1,1,0],[1,1,0,0,0], [1,1,0,0,0], [1,1,1,1,0], [0,1,0,1,0]]
 text_file = open(r"gcode_commands.txt", "w")
 text_file.write("INITIALIZE \n")
 text_file.write("G90 \n")
-text_file.write("G1 X0 F6000 \n")
+text_file.write(f"G1 X0 F{fast_speed} \n")
 text_file.write(gcode_pump("ON"))
-place_empty_grid((24, 1), text_file)
+place_empty_grid((22, 18), text_file)
 #generate_all_images(image_paths)
 #update_grid(initial_image, test_image)
 text_file.close()
