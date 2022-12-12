@@ -2,6 +2,9 @@
 Functions to convert desired gantry movement into strings denoting G-code commands
 '''
 
+xy_speed = 600 #mm/s
+z_speed =  400 #mm/s
+
 def gcode_move_xy(coords, text_file):
     '''
     Generates G-code command to move toolhead to a coordinate.
@@ -12,7 +15,7 @@ def gcode_move_xy(coords, text_file):
 
     Returns a string with the Gcode command to move to coords.
     '''
-    text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
+    text_file.write(f"G1 X{coords[0]} Y{coords[1]} F{xy_speed*60}\n")
 
 def gcode_move_z(z, text_file):
     '''
@@ -25,7 +28,7 @@ def gcode_move_z(z, text_file):
 
     Returns a string with the Gcode command to move to a specified height.
     '''
-    text_file.write(f"G1 Z{z}\n")
+    text_file.write(f"G1 Z{z} F{z_speed*60}\n")
 
 def gcode_pump(state, text_file):
     # TODO: confirm this Gcode command
