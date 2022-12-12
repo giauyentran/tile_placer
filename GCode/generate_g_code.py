@@ -36,8 +36,10 @@ def get_coord(tile_index):
 
     Returns a 2-tuple with corresponding to (x,y) in the gantry space.
     '''
+   
     t_x = tile_index[0]
     t_y = tile_index[1]
+
     x = (tile_width + dist_between_tiles) * t_x + work_offset
     y = (tile_width + dist_between_tiles) * t_y
 
@@ -59,18 +61,20 @@ def place_empty_grid(image_dimensions, text_file):
             coords = get_coord(tile_index)
 
             # GCode command
+            # Pick up tile from flipper
             text_file.write(gcode_move_z(travel_height))
             text_file.write(gcode_move_xy(flipper_pickup_pos))
             text_file.write("probe_tile\n")
             text_file.write(gcode_move_z(flipper_pickup_height))
             text_file.write(gcode_valve("OPEN"))
+
+            # Move to tile location
             text_file.write(gcode_move_z(travel_height))
             text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
             text_file.write("probe_tile\n")
             text_file.write(gcode_move_z(tile_pickup_height))
             text_file.write(gcode_valve("CLOSE"))
             text_file.write(gcode_move_z(travel_height))
-    pass
             
 
 def update_grid(previous_image, updated_image):
@@ -88,6 +92,12 @@ def update_grid(previous_image, updated_image):
                 flip_tile((c+1, r+1), text_file)
 
 def generate_all_images(image_paths):
+    '''
+    Generate sequence of binary images from raw images.
+
+    Args:
+        TODO
+    '''
     for i in range(1, len(image_paths)):
         img1_arr = convert_image.image_to_array(image_paths[i-1])
         print(f"img {i-1} against img {i}")
@@ -122,6 +132,7 @@ def flip_tile(tile_index, text_file):
     text_file.write(gcode_valve("OPEN"))
 
     # pick up tile
+    text_file.write(f"G4 P{flipper_delay} \n")
     text_file.write(gcode_move_xy(flipper_pickup_pos))
     text_file.write("probe_tile\n")
     text_file.write(gcode_move_z(flipper_pickup_height))
@@ -134,13 +145,7 @@ def flip_tile(tile_index, text_file):
 
     # turn off vacuum pump
     text_file.write(gcode_valve("CLOSE"))
-    text_file.write(f"G4 P{delay_rate} \n")
-
-initial_image = [([0]*5) for i in range(5)]
-#initial_image = [[0,0],[0,0]]
-test_image = [[0,1,1,1,0],[1,1,0,0,0], [1,1,0,0,0], [1,1,1,1,0], [0,1,0,1,0]]
-# test_image = convert_image()
-
+    text_file.write(f"G4 P{standard_delay} \n")
 
 # Generate Gcode
 text_file = open(r"gcode_commands.txt", "w")
@@ -152,4 +157,3 @@ place_empty_grid((24, 1), text_file)
 #generate_all_images(image_paths)
 #update_grid(initial_image, test_image)
 text_file.close()
-#print(get_coord((20, 15)))
