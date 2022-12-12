@@ -2,13 +2,23 @@ from PIL import Image
 import numpy as np
 from numpy import asarray
 
-def image_to_array(image_path):
+def image_to_array(image_path, image_dimensions):
+    '''
+    Processes raw images and converts to binary array to be plotted.
+
+    Args:
+        image_path: a string denoting the image path
+        image_dimensions: a 2-tuple in the form (width, height) in pixels 
+            denoting the desired dimensions of the
+    
+    Returns a binary array of the processed image.
+    '''
 
     # convert to grayscale
     img = Image.open(image_path)
     img = img.convert('L')
-    xdim = 24
-    ydim = 18
+    xdim = image_dimensions[0]
+    ydim = image_dimensions[1]
     #img.show() # Uncomment to display grayscale image
 
     # reduce resolution
@@ -34,5 +44,4 @@ def image_to_array(image_path):
     # binary_img = Image.fromarray(img_array * 255, 'L')
     # binary_img.show()
     
-
     return img_array
