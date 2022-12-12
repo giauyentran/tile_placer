@@ -20,7 +20,7 @@ image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path 
                bulk_of_path + r'\4.png', bulk_of_path + r'\5.png', bulk_of_path + r'\6.png',
                bulk_of_path + r'\7.png']
 delay_rate = 100
-work_offset = 104
+work_offset = 100
 def get_coord(tile_index):
     '''
     Converts tile index to gantry coordinates.
@@ -49,8 +49,9 @@ def place_empty_grid(image_dimensions, text_file):
     
     for r in range(image_dimensions[1]):
         for c in range(image_dimensions[0]):
-            tile_index = (r+1, c+1)
+            tile_index = (c+1, r+1)
             coords = get_coord(tile_index)
+            print(f"r: {r} c: {c} coords: {coords}")
 
             # GCode command
             text_file.write(gcode_move_z(travel_height))
@@ -77,7 +78,7 @@ def update_grid(previous_image, updated_image):
         for c in range(len(previous_image[r])):
             if previous_image[r][c] != updated_image[r][c]:
                 print(f"Found a difference")
-                flip_tile((r+1, c+1), text_file)
+                flip_tile((c+1, r+1), text_file)
 
 def generate_all_images(image_paths):
     for i in range(1, len(image_paths)):
@@ -136,8 +137,8 @@ text_file.write("INITIALIZE \n")
 text_file.write("G90 \n")
 text_file.write("G1 X0 F6000 \n")
 text_file.write(gcode_pump("ON"))
-# place_empty_grid((5, 5), text_file)
+place_empty_grid((24, 18), text_file)
 #generate_all_images(image_paths)
-update_grid(initial_image, test_image)
+#update_grid(initial_image, test_image)
 text_file.close()
 #print(get_coord((20, 15)))

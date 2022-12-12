@@ -7,8 +7,8 @@ def image_to_array(image_path):
     # convert to grayscale
     img = Image.open(image_path)
     img = img.convert('L')
-    xdim = 20
-    ydim = 15
+    xdim = 24
+    ydim = 18
     #img.show()
 
     # reduce resolution
