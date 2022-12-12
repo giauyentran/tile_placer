@@ -119,22 +119,23 @@ def flip_tile(tile_index, text_file):
         tile_index: the position of the tile in the grid, with the lower left corner starting at (1,1)
         text_file: a string denoting the filepath of the .txt file with Gcode commands
     '''
-    
+
     text_file.write(f"G1 Z{travel_height}\n")
     tile_coords = get_coord(tile_index)
 
-    # pick up to tile to flip
-    gcode_pump("ON", text_file)
-    gcode_valve("OPEN", text_file)
+    # pick up tile to flip
+    gcode_move_z(travel_height, text_file)
     gcode_move_xy(tile_coords, text_file)
     gcode_probe(text_file)
     gcode_move_z(tile_pickup_height, text_file)
+    gcode_delay(standard_delay, text_file)
+    gcode_valve("OPEN", text_file)
+    gcode_move_z(travel_height, text_file)
 
     # drop tile into flipper
     gcode_move_z(flipper_drop_height, text_file)
     gcode_move_xy(flipper_drop_pos, text_file)
-    gcode_probe(text_file)
-    gcode_valve("CLOSE", gcode_probe(text_file))
+    gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
     gcode_valve("OPEN", text_file)
 
@@ -152,6 +153,7 @@ def flip_tile(tile_index, text_file):
     gcode_move_z(tile_pickup_height, text_file)
 
     # turn off vacuum pump
+    gcode_delay(standard_delay, text_file)
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
 
@@ -161,7 +163,8 @@ text_file.write("INITIALIZE \n")
 text_file.write("G90 \n")
 text_file.write(f"G1 X0 F{fast_speed} \n")
 gcode_pump("ON", text_file)
-place_empty_grid((22, 18), text_file)
+
+#place_empty_grid((22, 18), text_file)
 #generate_all_images(image_paths)
 #update_grid(initial_image, test_image)
 text_file.close()
