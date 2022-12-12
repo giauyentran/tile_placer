@@ -9,11 +9,11 @@ def image_to_array(image_path):
     img = img.convert('L')
     xdim = 24
     ydim = 18
-    #img.show()
+    #img.show() # Uncomment to display grayscale image
 
     # reduce resolution
     img = img.resize((xdim, ydim))
-    #img.show()
+    #img.show() # Uncomment to display reduced grayscale image
 
     # convert to 2D array
     img_array = np.array(img)
@@ -30,8 +30,9 @@ def image_to_array(image_path):
             else:
                 img_array[i][j] = 0
 
-    # convert array into binary array
-    #binary_img = Image.fromarray(img_array * 255, 'L')
-    #binary_img.show()
+    # Uncomment next 2 lines to display final binary grid
+    # binary_img = Image.fromarray(img_array * 255, 'L')
+    # binary_img.show()
+    
 
     return img_array
