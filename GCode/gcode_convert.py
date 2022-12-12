@@ -1,10 +1,10 @@
-"""
-TODO: Docstring
-"""
+'''
+Functions to convert desired gantry movement into strings denoting G-code commands
+'''
 
 def gcode_move_xy(coords, text_file):
     '''
-    Generated Gcode command to move toolhead to location 
+    Generates G-code command to move toolhead to a coordinate.
 
     Args:
         coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
@@ -16,39 +16,27 @@ def gcode_move_xy(coords, text_file):
 
 def gcode_move_z(z, text_file):
     '''
-    Generated Gcode command to move toolhead to location 
+    Generates Gcode command to move toolhead to specified height, with z being
+    zeroed at the base plate and the positive z direction being upwards.
 
     Args:
         coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
-    Returns a string with the Gcode command to move to coords.
+    Returns a string with the Gcode command to move to a specified height.
     '''
     text_file.write(f"G1 Z{z}\n")
-
-def gcode_move_xy(coords, text_file):
-    '''
-    Generated Gcode command to move toolhead to location 
-
-    Args:
-        coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
-        text_file: a string denoting the filepath of the .txt file with Gcode commands
-
-    Returns a string with the Gcode command to move to coords.
-    '''
-    text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
 
 def gcode_pump(state, text_file):
     # TODO: confirm this Gcode command
     '''
-    Generated Gcode command to move toolhead to location 
+    Generates Gcode command to turn pump on and off. 
 
     Args:
-        coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
         state: a string describing the desired state of the pump, either "OFF" or "ON"
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
-    Returns a string with the Gcode command to move to coords.
+    Returns a string with the Gcode command to turn pump on/off.
     '''
 
     if state == "OFF":
@@ -61,14 +49,13 @@ def gcode_pump(state, text_file):
 def gcode_valve(state, text_file):
     # TODO: confirm this Gcode command
     '''
-    Generated Gcode command to move toolhead to location
+    Generates Gcode command to open and close the solenoid connected to the pump.
 
     Args:
-        coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
-        state: a string describing the desired state of the pump, either "OFF" or "ON"
+        state: a string describing the desired state of the pump, either "OPEN" or "CLOSE"
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
-    Returns a string with the Gcode command to move to coords.
+    Returns a string with the Gcode command to open/close the solenoid valve.
     '''
 
     if state == "OPEN":
@@ -80,25 +67,25 @@ def gcode_valve(state, text_file):
 
 def gcode_delay(delay_time, text_file):
     '''
-    Generate Gcode command to delay
+    Generate Gcode command to add a time-based delay.
 
     Args:
         delay_time: An integer denoting the amount of time to delay in ms
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
-    Returns a string with the Gcode command to move to coords.
+    Returns a string with the Gcode command for a time-based delay.
     '''
 
     text_file.write(f"G4 P{delay_time} \n")
 
 def gcode_probe(text_file):
     '''
-    Generate Gcode command to delay
+    Generate Gcode command to probe tile to ensure contact with the nozzle.
 
     Args:
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
-    Returns a string with the Gcode command to check that tile is in contact with nozzle.
+    Returns a string with the Gcode command to probe tiles.
     '''
 
-    text_file.write(f"probe_tile \n")
+    text_file.write(f"probe_tile\n")

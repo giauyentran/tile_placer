@@ -1,4 +1,4 @@
-from image_processing import convert_image
+# from image_processing import convert_image
 from gcode_convert import *
 import sys
 bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
@@ -78,7 +78,7 @@ def place_empty_grid(image_dimensions, text_file):
             gcode_move_xy(coords, text_file)
             gcode_probe(text_file)
             gcode_move_z(tile_pickup_height, text_file)
-            gcode_delay(standard_delay)
+            gcode_delay(standard_delay, text_file)
             gcode_valve("CLOSE", text_file)
             gcode_delay(standard_delay, text_file)
             gcode_move_z(travel_height, text_file)
@@ -131,7 +131,7 @@ def flip_tile(tile_index, text_file):
     gcode_move_z(tile_pickup_height, text_file)
 
     # drop tile into flipper
-    gcode_move_z(flipper_drop_height)
+    gcode_move_z(flipper_drop_height, text_file)
     gcode_move_xy(flipper_drop_pos, text_file)
     gcode_probe(text_file)
     gcode_valve("CLOSE", gcode_probe(text_file))
@@ -160,7 +160,7 @@ text_file = open(r"gcode_commands.txt", "w")
 text_file.write("INITIALIZE \n")
 text_file.write("G90 \n")
 text_file.write(f"G1 X0 F{fast_speed} \n")
-text_file.write(gcode_pump("ON"))
+gcode_pump("ON", text_file)
 place_empty_grid((22, 18), text_file)
 #generate_all_images(image_paths)
 #update_grid(initial_image, test_image)
