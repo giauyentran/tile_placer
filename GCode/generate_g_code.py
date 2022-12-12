@@ -19,7 +19,7 @@ travel_height = 30              # mm
 # Movement Parameters
 default_speed = 200             # RPM 
 image_dimensions = (18, 24)     # pixels
-standard_delay = 100            # ms
+standard_delay = 400            # ms
 flipper_delay = 400             # ms
 
 # Image Naming Convention
@@ -66,22 +66,22 @@ def place_empty_grid(image_dimensions, text_file):
 
             # GCode command
             # Pick up tile from flipper
-            text_file.write(gcode_move_z(travel_height))
-            text_file.write(gcode_move_xy(flipper_pickup_pos))
-            text_file.write("probe_tile\n")
-            text_file.write(gcode_move_z(flipper_pickup_height))
-            text_file.write(f"G4 P{400} \n")
-            text_file.write(gcode_valve("OPEN"))
+            gcode_move_z(travel_height, text_file)
+            gcode_move_xy(flipper_pickup_pos, text_file)
+            gcode_probe(text_file)
+            gcode_move_z(flipper_pickup_height, text_file)
+            gcode_delay(standard_delay, text_file)
+            gcode_valve("OPEN", text_file)
 
             # Move to tile location
-            text_file.write(gcode_move_z(travel_height))
-            text_file.write(f"G1 X{coords[0]} Y{coords[1]}\n")
-            text_file.write("probe_tile\n")
-            text_file.write(gcode_move_z(tile_pickup_height))
-            text_file.write(f"G4 P{400} \n")
-            text_file.write(gcode_valve("CLOSE"))
-            text_file.write(f"G4 P{400} \n")
-            text_file.write(gcode_move_z(travel_height))
+            gcode_move_z(travel_height, text_file)
+            gcode_move_xy(coords, text_file)
+            gcode_probe(text_file)
+            gcode_move_z(tile_pickup_height, text_file)
+            gcode_delay(standard_delay)
+            gcode_valve("CLOSE", text_file)
+            gcode_delay(standard_delay, text_file)
+            gcode_move_z(travel_height, text_file)
             
 
 def update_grid(previous_image, updated_image):
@@ -124,36 +124,36 @@ def flip_tile(tile_index, text_file):
     tile_coords = get_coord(tile_index)
 
     # pick up to tile to flip
-    text_file.write(gcode_pump("ON"))
-    text_file.write(gcode_valve("OPEN"))
-    text_file.write(gcode_move_xy(tile_coords))
-    text_file.write("probe_tile\n")
-    text_file.write(gcode_move_z(tile_pickup_height))
+    gcode_pump("ON", text_file)
+    gcode_valve("OPEN", text_file)
+    gcode_move_xy(tile_coords, text_file)
+    gcode_probe(text_file)
+    gcode_move_z(tile_pickup_height, text_file)
 
     # drop tile into flipper
-    text_file.write(gcode_move_z(flipper_drop_height))
-    text_file.write(gcode_move_xy(flipper_drop_pos))
-    text_file.write("probe_tile\n")
-    text_file.write(gcode_valve("CLOSE"))
-    text_file.write(f"G4 P{400} \n")
-    text_file.write(gcode_valve("OPEN"))
+    gcode_move_z(flipper_drop_height)
+    gcode_move_xy(flipper_drop_pos, text_file)
+    gcode_probe(text_file)
+    gcode_valve("CLOSE", gcode_probe(text_file))
+    gcode_delay(standard_delay, text_file)
+    gcode_valve("OPEN", text_file)
 
     # pick up tile
-    text_file.write(f"G4 P{flipper_delay} \n")
-    text_file.write(gcode_move_xy(flipper_pickup_pos))
-    text_file.write("probe_tile\n")
-    text_file.write(gcode_move_z(flipper_pickup_height))
-    text_file.write(f"G4 P{400} \n")
+    gcode_delay(flipper_delay, text_file)
+    gcode_move_xy(flipper_pickup_pos, text_file)
+    gcode_probe(text_file)
+    gcode_move_z(flipper_pickup_height, text_file)
+    gcode_delay(standard_delay, text_file)
 
     # place flipped tile
-    text_file.write(gcode_move_z(travel_height))
-    text_file.write(gcode_move_xy(tile_coords))
-    text_file.write("probe_tile\n")
-    text_file.write(gcode_move_z(tile_pickup_height))
+    gcode_move_z(travel_height, text_file)
+    gcode_move_xy(tile_coords, text_file)
+    gcode_probe(text_file)
+    gcode_move_z(tile_pickup_height, text_file)
 
     # turn off vacuum pump
-    text_file.write(gcode_valve("CLOSE"))
-    text_file.write(f"G4 P{standard_delay} \n")
+    gcode_valve("CLOSE", text_file)
+    gcode_delay(standard_delay, text_file)
 
 # Generate Gcode
 text_file = open(r"gcode_commands.txt", "w")
