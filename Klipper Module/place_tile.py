@@ -1,6 +1,10 @@
 # Global variables
-PLACEMENT_SPEED = 100
-TILE_THICKENESS_THRESHOLD = 2
+PLACEMENT_SPEED = 100.
+TILE_THICKENESS_THRESHOLD = 2.
+FLIPPER_PICKUP_POSITION = (0.,0.)
+
+# Pin definitions
+SOLENOID_PIN = "PH5" # "PA14" Final, testing with MK3 fan pin
 
 class EndstopWrapper:
     def __init__(self, config, endstop):
@@ -17,7 +21,10 @@ class PrinterPlaceProbe:
     def __init__(self, config):
         self.config = config
         self.printer = config.get_printer()
-        self.position_min = config.getfloat('position_min', None)
+        self.pins = self.printer.lookup_object("pins")
+        #self.pins.reset_pin_sharing("SOLENOID_PIN") # Need initially, not sure how long this is persistent
+        self.solenoid = self.pins.setup_pin("pwm", SOLENOID_PIN)
+        self.position_min = config.getfloat("position_min", None)
         self.gcode = self.printer.lookup_object("gcode")
         self.query_endstops = self.printer.load_object(config,
             'query_endstops')
