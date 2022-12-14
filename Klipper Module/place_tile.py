@@ -1,3 +1,7 @@
+# Global variables
+PLACEMENT_SPEED = 100
+TILE_THICKENESS_THRESHOLD = 2
+
 class EndstopWrapper:
     def __init__(self, config, endstop):
         self.mcu_endstop = endstop
@@ -20,9 +24,16 @@ class PrinterPlaceProbe:
         self.printer.register_event_handler("klippy:connect",
             self.handle_connect)
         self.gcode.register_command("PROBE_TILE", self.cmd_PROBE_TILE)
+        self.gcode.register_command("PLACE_TILE", self.cmd_PLACE_TILE)
 
     def cmd_PROBE_TILE(self, gcmd):
         self._detect_tile(self.z_endstop)
+
+    def cmd_PLACE_TILE(self, gcmd):
+        # Move Z to placement location, until z max limit switch is pressed
+        z_position = self._detect_tile(self.z_endstop)
+        if z_position < TILE_THICKENESS_THRESHOLD:
+            self._retry_tile_pickup()
 
     def handle_connect(self):
         for endstop, name in self.query_endstops.endstops:
@@ -34,8 +45,12 @@ class PrinterPlaceProbe:
         toolhead_position = toolhead.get_position()
         toolhead_position[2] = 0.0 #self.position_min
         phoming = self.printer.lookup_object("homing")
-        current_position = phoming.probing_move(endstop, toolhead_position, 100)
+        current_position = phoming.probing_move(endstop, toolhead_position, PLACEMENT_SPEED)
         self.gcode.respond_info("Z at %.6f" % (current_position[2]))
+        return current_position[2]
+
+    def _retry_tile_pickup(self):
+        pass
 
 def load_config(config):
     return PrinterPlaceProbe(config)
