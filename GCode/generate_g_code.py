@@ -4,6 +4,7 @@ import numpy
 #from image_processing.convert_image import image_to_array
 from convert_image import image_to_array
 from pathlib import Path
+import random
 
 bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
 # Insert the path of modules folder
@@ -11,22 +12,23 @@ sys.path.append(bulk_of_path)
 
 # Gantry Geometry
 work_offset = 40                # mm, unworkable area of grid for flipper
-dist_between_tiles = 2.5        # mm
+dist_between_tiles = 4        # mm
 tile_width = 23                 # mm
-flipper_drop_height = 100       # mm
-tile_pickup_height = 6          # mm
-flipper_pickup_height = 9       # mm
-flipper_pickup_pos = (15.5,411) # mm
-flipper_drop_pos = (flipper_pickup_pos[0], flipper_pickup_pos[1] + 38)       # mm
+flipper_drop_height = 101       # mm
+tile_pickup_height = 9          # mm
+flipper_pickup_height = 12       # mm
+flipper_pickup_pos = (15.5,409) # mm
+flipper_drop_pos = (flipper_pickup_pos[0], flipper_pickup_pos[1] + 29)       # mm
 travel_height = 30              # mm
+x_max = 662                   # mm
+y_max = 461                   # mm
+z_max = 101                 #mm
 
 # Movement Parameters
-default_speed = 100             # 200 RPM
-image_dim = (18, 24)            # pixels
+image_dim = (17, 22)            # pixels
 standard_delay = 100            # ms
 suction_delay = 1000            # ms
 flipper_delay = 500             # ms
-fast_speed = 6000 # 12000
 
 # Image Naming Convention
 image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path + r'\3.png',
@@ -50,6 +52,7 @@ def get_coord(tile_index):
     y = (tile_width + dist_between_tiles) * t_y
 
     return (x,y)
+
 def place_tile(tile_coordinates, text_file):
     '''
     TODO: determine how to do this
@@ -66,23 +69,30 @@ def place_tile(tile_coordinates, text_file):
     coords = get_coord(tile_index)
 
     # GCode command
-    # Pick up tile from flipper
+    # pick up tile from flipper
     gcode_move_z(travel_height, text_file)
+    text_file.write(f"; pick up tile from flipper\n")
+    gcode_delay(flipper_delay, text_file)
     gcode_move_xy(flipper_pickup_pos, text_file)
-    gcode_probe(text_file)
-    gcode_move_z(flipper_pickup_height, text_file)
-    gcode_delay(standard_delay, text_file)
     gcode_valve("OPEN", text_file)
+    gcode_move_z(flipper_pickup_height, text_file)
+    gcode_probe(text_file)
+    gcode_delay(standard_delay, text_file)
+    text_file.write(f"G91\n")  # converting to incremental - redefining origin
+    text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
+    text_file.write(f"G90\n")  # converts to absolute coords
+    # gcode_delay(standard_delay, text_file)
 
-    # Move to tile location
+    # place flipped tile
+    text_file.write(f"; place flipped tile\n")
     gcode_move_z(travel_height, text_file)
     gcode_move_xy(coords, text_file)
-    gcode_probe(text_file)
     gcode_move_z(tile_pickup_height, text_file)
-    gcode_delay(standard_delay, text_file)
+    gcode_probe(text_file)
+
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
-    gcode_move_z(travel_height, text_file)
+
 def place_empty_grid(image_dimensions, text_file):
     '''
     TODO: determine how to do this
@@ -101,7 +111,7 @@ def place_empty_grid(image_dimensions, text_file):
             coords = get_coord(tile_index)
 
             # pick up tile from flipper
-            gcode_move_z(travel_height, text_file)
+            gcode_move_z(flipper_drop_height, text_file)
             text_file.write(f"; pick up tile from flipper\n")
             gcode_delay(flipper_delay, text_file)
             gcode_move_xy(flipper_pickup_pos, text_file)
@@ -116,7 +126,7 @@ def place_empty_grid(image_dimensions, text_file):
 
             # place flipped tile
             text_file.write(f"; place flipped tile\n")
-            gcode_move_z(travel_height, text_file)
+            gcode_move_z(flipper_drop_height, text_file)
             gcode_move_xy(coords, text_file)
             gcode_move_z(tile_pickup_height, text_file)
             gcode_probe(text_file)
@@ -136,6 +146,10 @@ def update_grid(previous_image, updated_image):
         for c in range(image_dim[1]):
             if previous_image[r][c] != updated_image[r][c]:
                 flip_tile((c+1, r+1), text_file)
+    
+    # Move to corner after finished
+    gcode_move_z(z_max, text_file)
+    gcode_move_xy((x_max,y_max), text_file)
 
 def generate_all_images(image_paths):
     '''
@@ -209,24 +223,22 @@ def flip_tile(tile_index, text_file):
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
 
-# Generate Gcode
+# # Generate Gcode
 text_file = open(r"gcode_commands.txt", "w")
-text_file.write("INITIALIZE \n")
-text_file.write("G90 \n")
-text_file.write(f"G1 X0 F{fast_speed} \n")
-gcode_pump("ON", text_file)
-dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24))
-# dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/rowan_dino.png", (18, 24))
-#place_empty_grid((18, 24), text_file)
-white_grid = numpy.full((18, 24), 1)
-#generate_all_images(image_paths)
+text_file.write("INITIALIZE \n") # Home toolhead
+text_file.write("G90 \n")        # Specify Absolute Coordinate System
+gcode_pump("ON", text_file)      # Turn On Pump
+# # dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24)) #Gia filepath
+dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/1722dino.png", image_dim) #Gia filepath
+#place_empty_grid(image_dim, text_file)
+white_grid = numpy.full(image_dim, 1)
+# #generate_all_images(image_paths)
 update_grid(white_grid, dino)
-#place_tile((0, 0), text_file)
-#place_tile((21, 17), text_file)
-#print(get_coord((1,1)))
-#print(get_coord((1,18)))
 text_file.close()
 
 # convert .txt to .gcode
 p = Path('gcode_commands.txt')
+p = p.rename(f'gcode_commands_{random.randint(0, 10000)}.txt')
 p.rename(p.with_suffix('.gcode'))
+
+
