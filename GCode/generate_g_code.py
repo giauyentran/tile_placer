@@ -2,7 +2,7 @@ from gcode_convert import *
 import sys
 import numpy
 #from image_processing.convert_image import image_to_array
-from convert_image import image_to_array
+from convert_image_copy import image_to_array
 from pathlib import Path
 import random
 
@@ -150,6 +150,7 @@ def update_grid(previous_image, updated_image):
     # Move to corner after finished
     gcode_move_z(z_max, text_file)
     gcode_move_xy((x_max,y_max), text_file)
+    gcode_delay(10000, text_file)
 
 def generate_all_images(image_paths):
     '''
@@ -222,23 +223,4 @@ def flip_tile(tile_index, text_file):
     #gcode_delay(standard_delay, text_file)
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
-
-# # Generate Gcode
-text_file = open(r"gcode_commands.txt", "w")
-text_file.write("INITIALIZE \n") # Home toolhead
-text_file.write("G90 \n")        # Specify Absolute Coordinate System
-gcode_pump("ON", text_file)      # Turn On Pump
-# # dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24)) #Gia filepath
-dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/1722dino.png", image_dim) #Gia filepath
-#place_empty_grid(image_dim, text_file)
-white_grid = numpy.full(image_dim, 1)
-# #generate_all_images(image_paths)
-update_grid(white_grid, dino)
-text_file.close()
-
-# convert .txt to .gcode
-p = Path('gcode_commands.txt')
-p = p.rename(f'gcode_commands_{random.randint(0, 10000)}.txt')
-p.rename(p.with_suffix('.gcode'))
-
 
