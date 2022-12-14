@@ -1,7 +1,9 @@
 # Global variables
 PLACEMENT_SPEED = 100.
 TILE_THICKENESS_THRESHOLD = 2.
-FLIPPER_PICKUP_POSITION = (0.,0.)
+FLIPPER_PICKUP_POSITION = (150,150) # (15.5,409.) # Final, testing with MK3 build area
+XY_TRAVEL = 600
+Z_TRAVEL = 400
 
 # Pin definitions
 SOLENOID_PIN = "PH5" # "PA14" Final, testing with MK3 fan pin
@@ -37,6 +39,9 @@ class PrinterPlaceProbe:
         self._detect_tile(self.z_endstop)
 
     def cmd_PLACE_TILE(self, gcmd):
+        self.PLACE_TILE()
+
+    def PLACE_TILE(self):
         # Move Z to placement location, until z max limit switch is pressed
         z_position = self._detect_tile(self.z_endstop)
         if z_position < TILE_THICKENESS_THRESHOLD:
@@ -57,6 +62,16 @@ class PrinterPlaceProbe:
         return current_position[2]
 
     def _retry_tile_pickup(self):
+        toolhead = self.printer.lookup_object("toolhead")
+        toolhead_position = toolhead.get_position()
+        tile_position = (toolhead_position[0], toolhead_position[1])
+        toolhead.manual_move([None, None, 101], Z_TRAVEL) # Move Z up to 101mm
+        toolhead.manual_move([FLIPPER_PICKUP_POSITION[0], FLIPPER_PICKUP_POSITION[1], None], XY_TRAVEL) # Move to flipper pick up location
+        toolhead.manual_move([None, None, 15], Z_TRAVEL) # Move Z above pickup location, prep for probe
+        self._detect_tile(self.z_endstop) # Attempt tile pickup
+        toolhead.manual_move([None, None, 30], Z_TRAVEL) # Move Z up to 30mm
+        toolhead.manual_move([tile_position[0], tile_position[1], None], XY_TRAVEL) # Move to flipper pick up location
+        self.PLACE_TILE()
         pass
 
 def load_config(config):
