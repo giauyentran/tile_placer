@@ -1,8 +1,9 @@
 from gcode_convert import *
 import sys
 import numpy
-from image_processing.convert_image import image_to_array
-#from convert_image import image_to_array
+#from image_processing.convert_image import image_to_array
+from convert_image import image_to_array
+from pathlib import Path
 
 bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
 # Insert the path of modules folder
@@ -24,15 +25,13 @@ default_speed = 100             # 200 RPM
 image_dim = (18, 24)            # pixels
 standard_delay = 100            # ms
 suction_delay = 1000            # ms
-flipper_delay = 400             # ms
+flipper_delay = 500             # ms
+fast_speed = 6000 # 12000
 
 # Image Naming Convention
 image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path + r'\3.png',
                bulk_of_path + r'\4.png', bulk_of_path + r'\5.png', bulk_of_path + r'\6.png',
                bulk_of_path + r'\7.png']
-
-delay_rate = 100
-fast_speed = 6000 # 12000
 
 def get_coord(tile_index):
     '''
@@ -133,8 +132,6 @@ def update_grid(previous_image, updated_image):
         previous_image: a 2D binary array representing the image to be replaced
         updated_image: a 2D binary array representing the image to be plotted
     '''
-    print(previous_image)
-    print(updated_image)
     for r in range(image_dim[0]):
         for c in range(image_dim[1]):
             if previous_image[r][c] != updated_image[r][c]:
@@ -218,7 +215,8 @@ text_file.write("INITIALIZE \n")
 text_file.write("G90 \n")
 text_file.write(f"G1 X0 F{fast_speed} \n")
 gcode_pump("ON", text_file)
-dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (24, 18))
+dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24))
+# dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/rowan_dino.png", (18, 24))
 #place_empty_grid((18, 24), text_file)
 white_grid = numpy.full((18, 24), 1)
 #generate_all_images(image_paths)
@@ -229,3 +227,6 @@ update_grid(white_grid, dino)
 #print(get_coord((1,18)))
 text_file.close()
 
+# convert .txt to .gcode
+p = Path('gcode_commands.txt')
+p.rename(p.with_suffix('.gcode'))
