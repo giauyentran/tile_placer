@@ -14,15 +14,14 @@ class PrinterPlaceProbe:
         self.config = config
         self.printer = config.get_printer()
         self.position_min = config.getfloat('position_min', None)
-        gcode = self.printer.lookup_object("gcode")
+        self.gcode = self.printer.lookup_object("gcode")
         self.query_endstops = self.printer.load_object(config,
             'query_endstops')
         self.printer.register_event_handler("klippy:connect",
             self.handle_connect)
-        gcode.register_command("DETECT_TILE", self.cmd_DETECT_TILE)
+        self.gcode.register_command("PROBE_TILE", self.cmd_PROBE_TILE)
 
-    def cmd_DETECT_TILE(self, gcmd):
-        # gcmd.respond_info("sus")
+    def cmd_PROBE_TILE(self, gcmd):
         self._detect_tile(self.z_endstop)
 
     def handle_connect(self):
@@ -35,7 +34,10 @@ class PrinterPlaceProbe:
         toolhead_position = toolhead.get_position()
         toolhead_position[2] = 0.0 #self.position_min
         phoming = self.printer.lookup_object("homing")
-        phoming.probing_move(endstop, toolhead_position, 20)
+        current_position = phoming.probing_move(endstop, toolhead_position, 100)
+        self.gcode.respond_info("sus")
+        # self.gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
+        #         % (current_position[0], current_position[1], current_position[2]))
 
 def load_config(config):
     return PrinterPlaceProbe(config)
