@@ -35,9 +35,7 @@ class PrinterPlaceProbe:
         toolhead_position[2] = 0.0 #self.position_min
         phoming = self.printer.lookup_object("homing")
         current_position = phoming.probing_move(endstop, toolhead_position, 100)
-        self.gcode.respond_info("sus")
-        # self.gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
-        #         % (current_position[0], current_position[1], current_position[2]))
+        self.gcode.respond_info("Z at %.6f" % (current_position[2]))
 
 def load_config(config):
     return PrinterPlaceProbe(config)
