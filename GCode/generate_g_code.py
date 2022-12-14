@@ -11,25 +11,29 @@ bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\t
 sys.path.append(bulk_of_path)
 
 # Gantry Geometry
+
 work_offset = 40                # mm, unworkable area of grid for flipper
-dist_between_tiles = 4        # mm
-tile_width = 23                 # mm
-flipper_drop_height = 101       # mm
-tile_pickup_height = 9          # mm
-flipper_pickup_height = 12       # mm
+tile_gap = 4                    # mm, spacing between tiles
+tile_width = 23                 # mm, length of square tile
+tile_pickup_height = 9          # mm,
+flipper_pickup_height = 12      # mm
 flipper_pickup_pos = (15.5,409) # mm
-flipper_drop_pos = (flipper_pickup_pos[0], flipper_pickup_pos[1] + 29)       # mm
-travel_height = 30              # mm
+flipper_drop_pos = \
+    (flipper_pickup_pos[0], flipper_pickup_pos[1] + 29)       # mm
+flipper_drop_height = 101       # mm
+travel_height = 30              # mm, 
+# maximum travel distance
 x_max = 662                   # mm
 y_max = 461                   # mm
 z_max = 101                 #mm
+image_dim = (17, 22)            # pixels
 
 # Movement Parameters
-image_dim = (17, 22)            # pixels
 standard_delay = 100            # ms
 suction_delay = 1000            # ms
 flipper_delay = 500             # ms
 
+# TODO: What is this?
 # Image Naming Convention
 image_paths = [bulk_of_path + r'\1.png', bulk_of_path + r'\2.png', bulk_of_path + r'\3.png',
                bulk_of_path + r'\4.png', bulk_of_path + r'\5.png', bulk_of_path + r'\6.png',
@@ -48,8 +52,8 @@ def get_coord(tile_index):
     t_x = tile_index[0]
     t_y = tile_index[1]
 
-    x = (tile_width + dist_between_tiles) * t_x + work_offset
-    y = (tile_width + dist_between_tiles) * t_y
+    x = (tile_width + tile_gap) * t_x + work_offset
+    y = (tile_width + tile_gap) * t_y
 
     return (x,y)
 
@@ -223,4 +227,53 @@ def flip_tile(tile_index, text_file):
     #gcode_delay(standard_delay, text_file)
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
+
+# # Generate Gcode
+text_file = open(r"gcode_commands.txt", "w")
+
+# Opening Tasks
+text_file.write("INITIALIZE \n") # Home toolhead
+text_file.write("G90 \n")        # Specify Absolute Coordinate System
+gcode_pump("ON", text_file)      # Turn On Pump
+
+# Main Script
+
+# dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24)) #Gia filepath
+# dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/1722dino.png", image_dim) #Gia filepath
+#place_empty_grid(image_dim, text_file)
+white_grid = numpy.full(image_dim, 1)
+black_grid = numpy.full(image_dim, 0)
+# #generate_all_images(image_paths)
+# update_grid(white_grid, dino)
+
+# image_list = ["1722dino.png","dino1.png", "dino2.png", "dino3.png", "dino4.png", "dino5.png", "dino6.png", "dino7.png", "dino8.png", 'dino9.png', 'dino10.png','dino11.png', 'dino12.png',\
+#             'dino13.png', 'dino14.png', 'dino15.png', 'dino16.png', 'dino17.png', 'dino18.png', 'dino19.png', 'dino20.png', 'dino21.png', 'dino22.png',\
+#                 'dino23.png', 'dino24.png']
+# # image_list.insert(0, dino)
+# file_path = "/Users/giauyentran/tile_placer/GCode/dino_animation/"
+# # initial_image = image_to_array()
+
+# last_image = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/dino24.png', image_dim)
+# zero_image = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/1722dino.png', image_dim)
+# update_grid(last_image, zero_image)
+
+# for index in range(0,len(image_list)-1):
+#     current_image = f'{file_path}{image_list[index]}'
+#     print(current_image)
+#     next_image = f'{file_path}{image_list[index+1]}'
+#     print(next_image)
+#     prev_array = image_to_array(current_image, image_dim)
+#     next_array = image_to_array(next_image, image_dim)
+#     update_grid(prev_array, next_array)
+
+# Closing Tasks
+text_file.write("M84 \n")           # Turn off motors
+gcode_pump('OFF', text_file) # Turn off pump
+text_file.close()         
+
+# convert .txt to .gcode
+p = Path('gcode_commands.txt')
+p = p.rename(f'gcode_commands_{random.randint(0, 10000)}.txt')
+p.rename(p.with_suffix('.gcode'))
+
 
