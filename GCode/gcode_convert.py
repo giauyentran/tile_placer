@@ -2,8 +2,8 @@
 Functions to convert desired gantry movement into strings denoting G-code commands
 '''
 
-xy_speed = 600 #mm/s
-z_speed =  400 #mm/s
+xy_speed = 100 #600 mm/s
+z_speed =  200 #400 mm/s
 
 def gcode_move_xy(coords, text_file):
     '''

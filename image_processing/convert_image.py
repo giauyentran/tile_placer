@@ -36,9 +36,9 @@ def image_to_array(image_path, image_dimensions):
     for j in range(dimensions[1]):
         for i in range(dimensions[0]):
             if img_array[i][j] >= threshold:
-                img_array[i][j] = 0
-            else:
                 img_array[i][j] = 1
+            else:
+                img_array[i][j] = 0
 
     # Uncomment next 2 lines to display final binary grid
     # binary_img = Image.fromarray(img_array * 255, 'L')
