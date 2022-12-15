@@ -2,8 +2,8 @@
 Functions to convert desired gantry movement into strings denoting G-code commands
 '''
 
-xy_speed = 100 #600 mm/s
-z_speed =  200 #400 mm/s
+xy_speed = 600
+z_speed = 400
 
 def gcode_move_xy(coords, text_file):
     '''
@@ -15,7 +15,7 @@ def gcode_move_xy(coords, text_file):
 
     Returns a string with the Gcode command to move to coords.
     '''
-    text_file.write(f"G1 X{coords[0]} Y{coords[1]} F{xy_speed*60}\n")
+    text_file.write(f"G1 X{coords[0]} Y{coords[1]} F{xy_speed}\n")
 
 def gcode_move_z(z, text_file):
     '''
@@ -24,6 +24,7 @@ def gcode_move_z(z, text_file):
 
     Args:
         coords: A 2-tuple with the (x,y) cartesian coordinate of the target location
+        speed: An int denoting the desired speed speed of axis movement in mm/s
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
     Returns a string with the Gcode command to move to a specified height.
@@ -37,6 +38,7 @@ def gcode_pump(state, text_file):
 
     Args:
         state: a string describing the desired state of the pump, either "OFF" or "ON"
+        speed: An int denoting the desired speed speed of axis movement in mm/s
         text_file: a string denoting the filepath of the .txt file with Gcode commands
 
     Returns a string with the Gcode command to turn pump on/off.
@@ -92,3 +94,33 @@ def gcode_probe(text_file):
     '''
 
     text_file.write(f"probe_tile\n")
+
+def gcode_home(text_file):
+    '''
+    TODO: docstring
+    '''
+    text_file.write("INITIALIZE \n")
+
+def gcode_motors_off(text_file):
+    '''
+    TODO: docstring 
+    
+    Turns off motors
+    '''
+    text_file.write("M84 \n")
+
+def gcode_abs_coords(text_file):
+    '''
+    TODO: docstring
+
+    Use absolute coordinate system
+    '''
+    text_file.write("G90 \n")
+
+def gcode_abs_coords(text_file):
+    '''
+    TODO: docstring
+
+    Use absolute coordinate system
+    '''
+    text_file.write("G90 \n")

@@ -19,11 +19,11 @@ def image_to_array(image_path, image_dimensions):
     img = img.convert('L')
     xdim = image_dimensions[1]
     ydim = image_dimensions[0]
-    img.show() # Uncomment to display grayscale image
+    # img.show() # Uncomment to display grayscale image
 
     # reduce resolution
     img = img.resize((xdim, ydim))
-    img.show() # Uncomment to display reduced grayscale image
+    # img.show() # Uncomment to display reduced grayscale image
 
     # convert to 2D array
     img_array = np.array(img)
