@@ -17,20 +17,20 @@ def image_to_array(image_path, image_dimensions):
     # convert to grayscale
     img = Image.open(image_path)
     img = img.convert('L')
-    xdim = image_dimensions[0]
-    ydim = image_dimensions[1]
-    #img.show() # Uncomment to display grayscale image
+    xdim = image_dimensions[1]
+    ydim = image_dimensions[0]
+    img.show() # Uncomment to display grayscale image
 
     # reduce resolution
     img = img.resize((xdim, ydim))
-    #img.show() # Uncomment to display reduced grayscale image
+    img.show() # Uncomment to display reduced grayscale image
 
     # convert to 2D array
     img_array = np.array(img)
     dimensions = img_array.shape
 
     # set threshold for binary pixels
-    threshold = 125
+    threshold = 150
 
     # convert to binary array
     for j in range(dimensions[1]):
