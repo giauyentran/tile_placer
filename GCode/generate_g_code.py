@@ -2,7 +2,7 @@ from gcode_convert import *
 import sys
 import numpy
 #from image_processing.convert_image import image_to_array
-from convert_image_copy import image_to_array
+from convert_image import image_to_array
 from pathlib import Path
 import random
 
@@ -57,7 +57,7 @@ def get_coord(tile_index):
 
     return (x,y)
 
-def place_tile(tile_coordinates, text_file):
+def place_tile_legacy(tile_coordinates, text_file):
     '''
     TODO: determine how to do this
 
@@ -80,7 +80,7 @@ def place_tile(tile_coordinates, text_file):
     gcode_move_xy(flipper_pickup_pos, text_file)
     gcode_valve("OPEN", text_file)
     gcode_move_z(flipper_pickup_height, text_file)
-    gcode_probe(text_file)
+    text_file.write("place_tile")
     gcode_delay(standard_delay, text_file)
     text_file.write(f"G91\n")  # converting to incremental - redefining origin
     text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
@@ -92,7 +92,7 @@ def place_tile(tile_coordinates, text_file):
     gcode_move_z(travel_height, text_file)
     gcode_move_xy(coords, text_file)
     gcode_move_z(tile_pickup_height, text_file)
-    gcode_probe(text_file)
+    text_file.write("place_tile")
 
     gcode_valve("CLOSE", text_file)
     gcode_delay(standard_delay, text_file)
@@ -121,7 +121,7 @@ def place_empty_grid(image_dimensions, text_file):
             gcode_move_xy(flipper_pickup_pos, text_file)
             gcode_valve("OPEN", text_file)
             gcode_move_z(flipper_pickup_height, text_file)
-            gcode_probe(text_file)
+            text_file.write("place_tile")
             gcode_delay(standard_delay, text_file)
             text_file.write(f"G91\n")  # converting to incremental - redefining origin
             text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
@@ -133,7 +133,7 @@ def place_empty_grid(image_dimensions, text_file):
             gcode_move_z(flipper_drop_height, text_file)
             gcode_move_xy(coords, text_file)
             gcode_move_z(tile_pickup_height, text_file)
-            gcode_probe(text_file)
+            text_file.write("place_tile")
 
             gcode_valve("CLOSE", text_file)
             gcode_delay(standard_delay, text_file)
@@ -146,10 +146,12 @@ def update_grid(previous_image, updated_image):
         previous_image: a 2D binary array representing the image to be replaced
         updated_image: a 2D binary array representing the image to be plotted
     '''
+
     for r in range(image_dim[0]):
         for c in range(image_dim[1]):
             if previous_image[r][c] != updated_image[r][c]:
                 flip_tile((c+1, r+1), text_file)
+    
     
     # Move to corner after finished
     gcode_move_z(z_max, text_file)
@@ -188,6 +190,7 @@ def flip_tile(tile_index, text_file):
     gcode_valve("OPEN", text_file)
     gcode_move_z(tile_pickup_height, text_file)
     gcode_probe(text_file)
+    text_file.write(f"G91\n")
     gcode_delay(standard_delay, text_file)
     text_file.write(f"G91\n") # converting to incremental - redefining origin
     text_file.write(f"G1 Z2\n") # moves it two up from where it is
@@ -220,7 +223,8 @@ def flip_tile(tile_index, text_file):
     gcode_move_z(travel_height, text_file)
     gcode_move_xy(tile_coords, text_file)
     gcode_move_z(tile_pickup_height, text_file)
-    gcode_probe(text_file)
+    text_file.write("place_tile\n")
+    gcode_valve("OPEN", text_file)
 
     # turn off vacuum pump
     #text_file.write(f"; pump off\n")
@@ -246,25 +250,34 @@ black_grid = numpy.full(image_dim, 0)
 # #generate_all_images(image_paths)
 # update_grid(white_grid, dino)
 
-# image_list = ["1722dino.png","dino1.png", "dino2.png", "dino3.png", "dino4.png", "dino5.png", "dino6.png", "dino7.png", "dino8.png", 'dino9.png', 'dino10.png','dino11.png', 'dino12.png',\
-#             'dino13.png', 'dino14.png', 'dino15.png', 'dino16.png', 'dino17.png', 'dino18.png', 'dino19.png', 'dino20.png', 'dino21.png', 'dino22.png',\
-#                 'dino23.png', 'dino24.png']
-# # image_list.insert(0, dino)
-# file_path = "/Users/giauyentran/tile_placer/GCode/dino_animation/"
-# # initial_image = image_to_array()
+image_list = ["1722dino.png","dino1.png", "dino2.png", "dino3.png", "dino4.png", "dino5.png", "dino6.png", "dino7.png", "dino8.png", 'dino9.png', 'dino10.png','dino11.png', 'dino12.png',\
+            'dino13.png', 'dino14.png', 'dino15.png', 'dino16.png', 'dino17.png', 'dino18.png', 'dino19.png', 'dino20.png', 'dino21.png', 'dino22.png',\
+                'dino23.png', 'dino24.png']
+# image_list.insert(0, dino)
+file_path = "/Users/giauyentran/tile_placer/GCode/dino_animation/"
+# initial_image = image_to_array()
 
-# last_image = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/dino24.png', image_dim)
-# zero_image = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/1722dino.png', image_dim)
-# update_grid(last_image, zero_image)
+for index in range(21,len(image_list)-1):
+    current_image = f'{file_path}{image_list[index]}'
+    print(current_image)
+    next_image = f'{file_path}{image_list[index+1]}'
+    print(next_image)
+    prev_array = image_to_array(current_image, image_dim)
+    next_array = image_to_array(next_image, image_dim)
+    update_grid(prev_array, next_array)
 
-# for index in range(0,len(image_list)-1):
-#     current_image = f'{file_path}{image_list[index]}'
-#     print(current_image)
-#     next_image = f'{file_path}{image_list[index+1]}'
-#     print(next_image)
-#     prev_array = image_to_array(current_image, image_dim)
-#     next_array = image_to_array(next_image, image_dim)
-#     update_grid(prev_array, next_array)
+dino24 = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/dino24.png', image_dim)
+dino1722 = image_to_array('/Users/giauyentran/tile_placer/GCode/dino_animation/1722dino.png', image_dim)
+update_grid(dino24, dino1722)
+
+for index in range(0,len(image_list)-1):
+    current_image = f'{file_path}{image_list[index]}'
+    print(current_image)
+    next_image = f'{file_path}{image_list[index+1]}'
+    print(next_image)
+    prev_array = image_to_array(current_image, image_dim)
+    next_array = image_to_array(next_image, image_dim)
+    update_grid(prev_array, next_array)
 
 # Closing Tasks
 text_file.write("M84 \n")           # Turn off motors
@@ -275,5 +288,3 @@ text_file.close()
 p = Path('gcode_commands.txt')
 p = p.rename(f'gcode_commands_{random.randint(0, 10000)}.txt')
 p.rename(p.with_suffix('.gcode'))
-
-
