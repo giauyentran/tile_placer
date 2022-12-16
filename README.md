@@ -16,12 +16,14 @@ We used klipper as our 3D printing firmware to generate g-code. Klipper has a fr
 1.	Acquire a tile placing gantry 
 2.	Acquire a Pi 4b + Ethernet cable + micro-usb
 3.	Install klipper and fluidd onto pi using their tutorials
-4.	Install all of our software dependencies 
-5.	Clone this repo 
-6.	Change the image file paths in our generate_g_code.py to your local paths
-7.	Run the Python scripts 
-8.	Upload the text file to fluidd 
-9.	Run it with the print command
+4.	Install Python 10
+5.	Install an IDE like Pycharm or VSCode 
+6.	Install numpy and PIL (Python Image Library) for Python 10
+7.	Clone this repo 
+8.	Change the image file paths in our generate_g_code.py to your local paths
+9.	Run the Python scripts 
+10.	Upload the text file to fluidd 
+11.	Run it with the print command
 
 ## Additional information 
 The FSM digram contains useful information about Pi setup, which is copied here: 
