@@ -1,11 +1,3 @@
-from gcode_convert import *
-import sys
-import numpy
-#from image_processing.convert_image import image_to_array
-from convert_image import image_to_array
-from pathlib import Path
-import random
-
 # Gantry Geometry
 work_offset = 40                # mm, unworkable width of grid due to flipper
 tile_gap = 4                    # mm, spacing between tiles
@@ -26,8 +18,8 @@ image_dim = (17, 22)            # pixels
 standard_delay = 100            # ms
 suction_delay = 1000            # ms
 flipper_delay = 500             # ms
-xy_speed = 600 # mm/s
-z_speed =  400 # mm/s
+xy_speed = 1000                 # mm/s, default speed: 1000
+z_speed = 600                   # mm/s , default speed: 600
 
 
 text_file_name = "gcode_commands.txt"

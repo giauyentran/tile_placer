@@ -41,7 +41,7 @@ def image_to_array(image_path, image_dimensions):
                 img_array[i][j] = 1
 
     # Uncomment next 2 lines to display final binary grid
-    # binary_img = Image.fromarray(img_array * 255, 'L')
-    # binary_img.show()
+    binary_img = Image.fromarray(img_array * 255, 'L')
+    binary_img.show()
     
     return img_array

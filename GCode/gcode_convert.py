@@ -1,9 +1,7 @@
 '''
 Functions to convert desired gantry movement into strings denoting G-code commands
 '''
-
-xy_speed = 1000 # mm/s, default speed: 1000
-z_speed = 600   # mm/s , default speed: 600
+from parameters import xy_speed, z_speed
 
 def gcode_move_xy(coords, text_file):
     '''

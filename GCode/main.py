@@ -1,6 +1,11 @@
 from movement import *
 from gcode_convert import *
 from parameters import *
+from convert_image import *
+
+import numpy as np
+from pathlib import Path
+import random
 
 # Generate Gcode
 text_file = open(text_file_name, "w")
@@ -14,8 +19,8 @@ gcode_pump("ON", text_file)      # Turn On Pump
 # dino = image_to_array(r"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images\dino.png", (18, 24)) #Gia filepath
 # dino = image_to_array(r"/Users/giauyentran/tile_placer/GCode/1722dino.png", image_dim) #Gia filepath
 # place_empty_grid(image_dim, text_file)
-white_grid = numpy.full(image_dim, 1)
-black_grid = numpy.full(image_dim, 0)
+white_grid = np.full(image_dim, 1)
+black_grid = np.full(image_dim, 0)
 # #generate_all_images(image_paths)
 # update_grid(white_grid, dino)
 
@@ -27,7 +32,7 @@ file_path = "/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/"
 # initial_image = image_to_array()
 
 dino1 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/dino3.png', image_dim)
-dino2 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/initial.png', image_dim)
+dino2 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/initial_dino.png', image_dim)
 update_grid(dino1, dino2, text_file)
 
 # for index in range(0,len(image_list)-1):
