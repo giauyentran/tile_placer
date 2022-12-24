@@ -27,7 +27,3 @@ z_speed = 600                   # mm/s , default speed: 600
 
 # Output file w/ G-code commands
 text_file_name = "gcode_commands.txt"
-
-# bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
-# # Insert the path of modules folder
-# sys.path.append(bulk_of_path)
