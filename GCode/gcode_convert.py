@@ -2,8 +2,8 @@
 Functions to convert desired gantry movement into strings denoting G-code commands
 '''
 
-xy_speed = 600
-z_speed = 400
+xy_speed = 1000 # mm/s, default speed: 1000
+z_speed = 600   # mm/s , default speed: 600
 
 def gcode_move_xy(coords, text_file):
     '''
@@ -15,7 +15,7 @@ def gcode_move_xy(coords, text_file):
 
     Returns a string with the Gcode command to move to coords.
     '''
-    text_file.write(f"G1 X{coords[0]} Y{coords[1]} F{xy_speed}\n")
+    text_file.write(f"G1 X{coords[0]} Y{coords[1]} F{xy_speed*60}\n")
 
 def gcode_move_z(z, text_file):
     '''
@@ -29,7 +29,7 @@ def gcode_move_z(z, text_file):
 
     Returns a string with the Gcode command to move to a specified height.
     '''
-    text_file.write(f"G1 Z{z} F{z_speed*60}\n")
+    text_file.write(f"G1 Z{z} F{z_speed * 60}\n")
 
 def gcode_pump(state, text_file):
     # TODO: confirm this Gcode command
@@ -97,30 +97,40 @@ def gcode_probe(text_file):
 
 def gcode_home(text_file):
     '''
-    TODO: docstring
+    Generate Gcode command to home toolhead
+
+    Args:
+        text_file: a string denoting the filepath of the .txt file with Gcode commands
+
     '''
     text_file.write("INITIALIZE \n")
 
 def gcode_motors_off(text_file):
     '''
-    TODO: docstring 
-    
-    Turns off motors
+    Generate Gcode command to turn off motors
+
+    Args:
+        text_file: a string denoting the filepath of the .txt file with Gcode commands 
+
     '''
     text_file.write("M84 \n")
 
 def gcode_abs_coords(text_file):
     '''
-    TODO: docstring
+    Generate Gcode command to use absolute coordinates
 
-    Use absolute coordinate system
+    Args:
+        text_file: a string denoting the filepath of the .txt file with Gcode commands 
+        
     '''
     text_file.write("G90 \n")
 
-def gcode_abs_coords(text_file):
+def gcode_rel_coords(text_file):
     '''
-    TODO: docstring
+    Generate Gcode command to use relative coordinates
 
-    Use absolute coordinate system
+    Args:
+        text_file: a string denoting the filepath of the .txt file with Gcode commands 
+        
     '''
-    text_file.write("G90 \n")
+    text_file.write("G91 \n")

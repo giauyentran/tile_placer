@@ -26,8 +26,8 @@ image_list = ["1722dino.png","dino1.png", "dino2.png", "dino3.png", "dino4.png",
 file_path = "/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/"
 # initial_image = image_to_array()
 
-dino1 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/dino1.png', image_dim)
-dino2 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/dino2.png', image_dim)
+dino1 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/dino3.png', image_dim)
+dino2 = image_to_array('/Users/giauyentran/Desktop/tile_placer/GCode/dino_animation/initial.png', image_dim)
 update_grid(dino1, dino2, text_file)
 
 # for index in range(0,len(image_list)-1):
