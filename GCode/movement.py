@@ -1,5 +1,5 @@
 '''
-TODO: docstring
+Functions to control the om
 '''
 
 from parameters import *
@@ -49,10 +49,9 @@ def place_tile_legacy(tile_coordinates, text_file):
     gcode_move_z(flipper_pickup_height, text_file)
     text_file.write("place_tile")
     gcode_delay(standard_delay, text_file)
-    text_file.write(f"G91\n")  # converting to incremental - redefining origin
-    text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
-    text_file.write(f"G90\n")  # converts to absolute coords
-    # gcode_delay(standard_delay, text_file)
+    gcode_incr_coords(text_file)    # converting to incremental - redefining origin
+    gcode_move_z(5, text_file)      # moves it two up from where it is
+    gcode_abs_coords(text_file)     # converts to absolute coords
 
     # place flipped tile
     text_file.write(f"; place flipped tile\n")
@@ -90,10 +89,9 @@ def place_empty_grid(image_dimensions, text_file):
             gcode_move_z(flipper_pickup_height, text_file)
             text_file.write("place_tile")
             gcode_delay(standard_delay, text_file)
-            text_file.write(f"G91\n")  # converting to incremental - redefining origin
-            text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
-            text_file.write(f"G90\n")  # converts to absolute coords
-            # gcode_delay(standard_delay, text_file)
+            gcode_incr_coords(text_file)  # converting to incremental - redefining origin
+            gcode_move_z(5, text_file)    # moves it two up from where it is
+            gcode_abs_coords(text_file)   # converts to absolute coords
 
             # place flipped tile
             text_file.write(f"; place flipped tile\n")
@@ -130,7 +128,8 @@ def generate_all_images(image_paths):
     Generate sequence of binary images from raw images.
 
     Args:
-        TODO
+        image_paths: a list of strings, with each string denoting the filepaths
+            of the images to plot
     '''
     for i in range(1, len(image_paths)):
         img1_arr = convert_image.image_to_array(image_paths[i-1])
@@ -157,11 +156,11 @@ def flip_tile(tile_index, text_file):
     gcode_valve("OPEN", text_file)
     gcode_move_z(tile_pickup_height, text_file)
     gcode_probe(text_file)
-    text_file.write(f"G91\n")
+    gcode_incr_coords(text_file)
     gcode_delay(standard_delay, text_file)
-    text_file.write(f"G91\n") # converting to incremental - redefining origin
-    text_file.write(f"G1 Z2\n") # moves it two up from where it is
-    text_file.write(f"G90\n") # converts to absolute coords
+    gcode_incr_coords(text_file)  # converting to incremental - redefining origin
+    gcode_move_z(2, text_file)    # moves it two up from where it is
+    gcode_abs_coords(text_file)   # converts to absolute coords
     gcode_move_z(travel_height, text_file)
 
     # drop tile into flipper
@@ -180,9 +179,9 @@ def flip_tile(tile_index, text_file):
     gcode_move_z(flipper_pickup_height, text_file)
     gcode_probe(text_file)
     gcode_delay(standard_delay, text_file)
-    text_file.write(f"G91\n")  # converting to incremental - redefining origin
-    text_file.write(f"G1 Z5 F1200\n")  # moves it two up from where it is
-    text_file.write(f"G90\n")  # converts to absolute coords
+    gcode_incr_coords(text_file)  # converting to incremental - redefining origin
+    gcode_move_z(5, text_file)    # moves it two up from where it is
+    gcode_abs_coords(text_file)   # converts to absolute coords
     #gcode_delay(standard_delay, text_file)
 
     # place flipped tile

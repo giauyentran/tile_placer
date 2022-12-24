@@ -30,7 +30,6 @@ def gcode_move_z(z, text_file):
     text_file.write(f"G1 Z{z} F{z_speed * 60}\n")
 
 def gcode_pump(state, text_file):
-    # TODO: confirm this Gcode command
     '''
     Generates Gcode command to turn pump on and off. 
 
@@ -50,7 +49,6 @@ def gcode_pump(state, text_file):
         text_file.write("Error: Pump state invalid")
 
 def gcode_valve(state, text_file):
-    # TODO: confirm this Gcode command
     '''
     Generates Gcode command to open and close the solenoid connected to the pump.
 
@@ -123,9 +121,9 @@ def gcode_abs_coords(text_file):
     '''
     text_file.write("G90 \n")
 
-def gcode_rel_coords(text_file):
+def gcode_incr_coords(text_file):
     '''
-    Generate Gcode command to use relative coordinates
+    Generate Gcode command to use incremental coordinates
 
     Args:
         text_file: a string denoting the filepath of the .txt file with Gcode commands 

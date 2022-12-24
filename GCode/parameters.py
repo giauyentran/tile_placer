@@ -1,3 +1,7 @@
+'''
+Define global parameters.
+'''
+
 # Gantry Geometry
 work_offset = 40                # mm, unworkable width of grid due to flipper
 tile_gap = 4                    # mm, spacing between tiles
@@ -12,7 +16,7 @@ travel_height = 30              # mm,
 x_max = 662                     # mm
 y_max = 461                     # mm
 z_max = 101                     # mm
-image_dim = (17, 22)            # pixels
+image_dim = (17, 22)            # pixels, (# rows, # columns)
 
 # Movement Parameters
 standard_delay = 100            # ms
@@ -21,7 +25,7 @@ flipper_delay = 500             # ms
 xy_speed = 1000                 # mm/s, default speed: 1000
 z_speed = 600                   # mm/s , default speed: 600
 
-
+# Output file w/ G-code commands
 text_file_name = "gcode_commands.txt"
 
 # bulk_of_path = R"C:\Users\jbrown\Documents\GitHub\tile_placer\Image Conversion\test_images"
