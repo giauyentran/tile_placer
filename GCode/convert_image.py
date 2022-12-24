@@ -44,8 +44,12 @@ def image_to_array(image_path, image_dimensions):
     # array indexes from top left pixel, but gantry indexes from bottom left
     img_array = np.flipud(img_array)
 
-    # Uncomment next 2 lines to display final binary image
+    # Uncomment next 2 lines to display final binary image (for troubleshooting)
     # binary_img = Image.fromarray(np.flipud(img_array) * 255, 'L')
     # binary_img.show()
+
+    # Uncomment next lines to print final binary array (for troubleshooting)
+    # print(img_array) # this will appear flipped when printed
+    # print(np.flipud(img_array)) # as it will appear when plotted
     
     return img_array
