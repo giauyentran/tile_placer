@@ -1,6 +1,7 @@
 # Global variables
 PLACEMENT_SPEED = 100.
 TILE_THICKENESS_THRESHOLD = 2.
+TILE_THICKNESS_TOLERANCE = 1.
 FLIPPER_PICKUP_POSITION = (15.5,409.) # Final, testing with MK3 build area
 XY_TRAVEL = 600
 Z_TRAVEL = 400
@@ -45,7 +46,8 @@ class PrinterPlaceProbe:
         # Move Z to placement location, until z max limit switch is pressed
         z_position = self._detect_tile(self.z_endstop)
         if z_position < TILE_THICKENESS_THRESHOLD:
-            self._retry_tile_pickup()
+            if self._confirm_missing_tile(z_position):
+                self._retry_tile_pickup()
 
     def handle_connect(self):
         for endstop, name in self.query_endstops.endstops:
@@ -61,6 +63,22 @@ class PrinterPlaceProbe:
         self.gcode.respond_info("Z at %.6f" % (current_position[2]))
         return current_position[2]
 
+    def _confirm_missing_tile(z_position, self):
+        toolhead = self.printer.lookup_object("toolhead")
+        toolhead_position = toolhead.get_position()
+        if toolhead_position[1] < 225:
+            check_move = 25
+        else:
+            check_move = -25
+        tile_position = (toolhead_position[0], toolhead_position[1])
+        toolhead.manual_move([None, None, 20], Z_TRAVEL) # Move Z up to 20mm
+        toolhead.manual_move([None, toolhead_position[1] + check_move, None], XY_TRAVEL) # Move to tile above or below
+        z_position_other_tile = self._detect_tile(self.z_endstop)
+        if abs(z_position_other_tile - z_position) > TILE_THICKNESS_TOLERANCE:
+            return False
+        else:
+            return True
+
     def _retry_tile_pickup(self):
         toolhead = self.printer.lookup_object("toolhead")
         toolhead_position = toolhead.get_position()
@@ -70,7 +88,7 @@ class PrinterPlaceProbe:
         toolhead.manual_move([None, None, 15], Z_TRAVEL) # Move Z above pickup location, prep for probe
         self._detect_tile(self.z_endstop) # Attempt tile pickup
         toolhead.manual_move([None, None, 30], Z_TRAVEL) # Move Z up to 30mm
-        toolhead.manual_move([tile_position[0], tile_position[1], None], XY_TRAVEL) # Move to flipper pick up location
+        toolhead.manual_move([tile_position[0], tile_position[1], None], XY_TRAVEL) # Move to tile placement location
         self.PLACE_TILE()
         pass
 
