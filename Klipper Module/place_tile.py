@@ -74,10 +74,12 @@ class PrinterPlaceProbe:
         toolhead.manual_move([None, None, 20], Z_TRAVEL) # Move Z up to 20mm
         toolhead.manual_move([None, toolhead_position[1] + check_move, None], XY_TRAVEL) # Move to tile above or below
         z_position_other_tile = self._detect_tile(self.z_endstop)
+        toolhead.manual_move([None, None, 20], Z_TRAVEL) # Move Z up to 20mm
+        toolhead.manual_move([tile_position[0], tile_position[1], None], XY_TRAVEL) # Move to original tile location
         if abs(z_position_other_tile - z_position) > TILE_THICKNESS_TOLERANCE:
-            return False
-        else:
             return True
+        else:
+            return False
 
     def _retry_tile_pickup(self):
         toolhead = self.printer.lookup_object("toolhead")
